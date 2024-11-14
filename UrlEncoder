@@ -1,0 +1,35 @@
+import urllib.parse
+
+def urlencode_nested(data, prefix=None):
+    """
+    Recursively encode a nested dictionary to a URL-encoded string.
+
+    :param data: The dictionary to encode.
+    :param prefix: Used for nested keys (internal use).
+    :return: URL-encoded string.
+    """
+    if isinstance(data, dict):
+        # Handle nested dictionary
+        items = []
+        for key, value in data.items():
+            if prefix:
+                new_key = f"{prefix}[{key}]"
+            else:
+                new_key = key
+            items.append(urlencode_nested(value, new_key))
+        return "&".join(items)
+    else:
+        # Encode non-dict values
+        return f"{urllib.parse.quote_plus(str(prefix))}={urllib.parse.quote_plus(str(data))}"
+
+# Example usage:
+data = {
+    'profile': {'firstName': 'M', 'email': 'a@d.de', 'lastName': 'V'},
+    'UID': 10321,
+    'ApiKey': '1234',
+    'userKey': '5678',
+    'secret': '3456'
+}
+
+encoded_data = urlencode_nested(data)
+print(encoded_data)
